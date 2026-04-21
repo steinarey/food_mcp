@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 
 import asyncpg
 from fastmcp import FastMCP
-from mcp.server.transport_security import TransportSecuritySettings
 
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
 DATABASE_URL = os.environ.get(
@@ -42,13 +41,7 @@ async def lifespan(_: FastMCP):
         _pool = None
 
 
-mcp = FastMCP(
-    "usda-nutrition",
-    lifespan=lifespan,
-    transport_security=TransportSecuritySettings(
-        enable_dns_rebinding_protection=False,
-    ),
-)
+mcp = FastMCP("usda-nutrition", lifespan=lifespan)
 
 
 SEARCH_SQL = """

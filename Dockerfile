@@ -10,8 +10,7 @@
 #   postgresql://postgres:$DB_PASSWORD@postgresql17:5432/usda).
 # - Or override the full connection string via DATABASE_URL if your setup
 #   differs.
-# - DNS rebinding protection is disabled because the server runs on the
-#   LAN only (Host header validation would otherwise reject LAN hostnames).
+# - FastMCP 2.x leaves DNS rebinding protection off by default (LAN-safe).
 
 FROM python:3.12-slim
 
