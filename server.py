@@ -3,9 +3,12 @@ from contextlib import asynccontextmanager
 
 import asyncpg
 from fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "postgresql://postgres@postgresql17:5432/usda"
+    "DATABASE_URL",
+    f"postgresql://postgres:{DB_PASSWORD}@postgresql17:5432/usda",
 )
 
 DEFAULT_DATA_TYPES = ["foundation_food", "sr_legacy_food", "survey_fndds_food"]
@@ -39,7 +42,13 @@ async def lifespan(_: FastMCP):
         _pool = None
 
 
-mcp = FastMCP("usda-nutrition", lifespan=lifespan)
+mcp = FastMCP(
+    "usda-nutrition",
+    lifespan=lifespan,
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+    ),
+)
 
 
 SEARCH_SQL = """

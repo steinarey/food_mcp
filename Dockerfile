@@ -5,15 +5,19 @@
 #   so it can resolve the hostname `postgresql17`.
 # - Map a host port of your choice to container port 8000.
 # - The MCP endpoint will be served at http://<host>:<port>/mcp
-# - Override the database URL via the DATABASE_URL environment variable
-#   if your setup differs from the default
-#   (postgresql://postgres@postgresql17:5432/usda).
+# - Supply the Postgres password via the DB_PASSWORD environment variable
+#   (the default connection string is
+#   postgresql://postgres:$DB_PASSWORD@postgresql17:5432/usda).
+# - Or override the full connection string via DATABASE_URL if your setup
+#   differs.
+# - DNS rebinding protection is disabled because the server runs on the
+#   LAN only (Host header validation would otherwise reject LAN hostnames).
 
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DATABASE_URL=postgresql://postgres@postgresql17:5432/usda
+    DB_PASSWORD=""
 
 WORKDIR /app
 
