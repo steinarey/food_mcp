@@ -1,0 +1,35 @@
+# Docker Compose template for running food-mcp on unRAID
+# (via the Compose.Manager plugin).
+#
+# Usage:
+#   1. Clone this repo into your unRAID appdata directory.
+#   2. Set DB_PASSWORD (and optionally DATABASE_URL) in the unRAID
+#      Compose.Manager UI or in a sibling .env file.
+#   3. Update the `networks` block below so `name:` matches the Docker
+#      network that your `postgresql17` container is attached to
+#      (check with: `docker inspect postgresql17 -f '{{json .NetworkSettings.Networks}}'`).
+#   4. Start the stack — Compose will build the image from the Dockerfile
+#      in this directory and tag it as food-mcp:latest.
+
+services:
+  food-mcp:
+    build: .
+    image: food-mcp:latest
+    container_name: food-mcp
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Password for the `postgres` user on postgresql17. Required.
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      # Optional: full connection string override. If unset, server.py
+      # builds postgresql://postgres:$DB_PASSWORD@postgresql17:5432/usda
+      DATABASE_URL: ${DATABASE_URL:-}
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    external: true
+    # Replace with the actual Docker network name that postgresql17 uses.
+    name: postgres_default
